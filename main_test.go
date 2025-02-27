@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -37,4 +38,11 @@ func TestGetFileData(t *testing.T) {
 	}
 
 	assert.Equal(t, content, data)
+}
+
+func TestMain(m *testing.M) {
+	m.Run()
+	if testing.CoverMode() != "" {
+		fmt.Println("Coverage is ", testing.Coverage())
+	}
 }

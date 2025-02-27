@@ -187,7 +187,7 @@ func (s *scanner) content() {
 	for {
 		if !s.isAtEnd() && isContentChar(s.peek()) {
 			s.advance()
-		} else if s.peek() == 92 && !isContentChar(s.peekNext()) {
+		} else if s.peek() == 92 && !isContentChar(s.peekNext()) { // To escapre characters. Ex "\\ \* \[ \]"
 			s.advance()
 			s.advance()
 		} else {
