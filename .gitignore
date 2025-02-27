@@ -1,2 +1,4 @@
 bin/
 wasm_exec.js
+utils/tool
+site/

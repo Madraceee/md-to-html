@@ -27,6 +27,8 @@ func runFile() {
 		DPrintf("%s %s\n", getTokenTypeString(t.TokenType), t.Lexeme)
 	}
 
+	parser := NewParser(tokens)
+	parser.Parse()
 }
 
 func getFileData(filename string) (string, error) {
