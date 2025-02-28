@@ -10,6 +10,7 @@ type VisitChunk interface {
 	VisitLineChunk(*Line) (interface{}, error)
 	VisitLineBreakChunk(*LineBreak) (interface{}, error)
 	VisitCodeChunk(*Code) (interface{}, error)
+	VisitListChunk(*List) (interface{}, error)
 }
 
 type Heading struct {
@@ -76,4 +77,22 @@ func NewCode(code Token) Chunk {
 
 func (expr *Code) Visit(visitor VisitChunk) (interface{}, error) {
 	return visitor.VisitCodeChunk(expr)
+}
+
+type List struct {
+	Content  [][]Para
+	Level    []int
+	ListType []Token
+}
+
+func NewList(content [][]Para, level []int, listType []Token) Chunk {
+	return &List{
+		Content:  content,
+		Level:    level,
+		ListType: listType,
+	}
+}
+
+func (expr *List) Visit(visitor VisitChunk) (interface{}, error) {
+	return visitor.VisitListChunk(expr)
 }

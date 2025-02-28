@@ -24,7 +24,6 @@ func NewParser(tokens []Token) *Parser {
 }
 
 func (p *Parser) Parse() {
-	// chunks = make([]chunks,0)
 	chunks := make([]Chunk, 0)
 	for !p.isAtEnd() {
 		chunk := p.chunk()
@@ -62,6 +61,29 @@ func (p *Parser) chunk() Chunk {
 	} else if p.match(CODE) {
 		defer p.advance()
 		return NewCode(p.previos())
+	} else if p.match(LIST_NUMBER, DASH, STAR, PLUS) {
+		DPrintf("In List %s\n", getTokenTypeString(p.previos().TokenType))
+		p.retreat()
+		listType := make([]Token, 0)
+		levels := make([]int, 0)
+		contents := make([][]Para, 0)
+		for {
+			level := 0
+			for p.match(TAB) {
+				level++
+			}
+			if p.match(LIST_NUMBER, DASH, STAR, PLUS) {
+				levels = append(levels, level)
+				listType = append(listType, p.previos())
+			} else {
+				p.retreat()
+				break
+			}
+
+			contents = append(contents, p.paragraph())
+		}
+
+		return NewList(contents, levels, listType)
 	} else {
 		return NewParagraph(p.paragraph())
 	}
@@ -147,14 +169,14 @@ func (p *Parser) paragraph() []Para {
 	DPrintf("Inside Para %s %s\n", getTokenTypeString(p.peek().TokenType), p.peek().Lexeme)
 	content := make([]Para, 0)
 	for {
-		if p.match(CONTENT, SPACE, TAB, TRIPLE_DASH) {
+		if p.match(CONTENT, SPACE, TAB, TRIPLE_DASH, LEFT_PARAN, RIGHT_PARAN) {
 			switch p.previos().TokenType {
 			case CONTENT:
 				content = append(content, NewString(p.previos()))
 			case SPACE, TAB:
 				content = append(content, NewWhitespace(p.previos()))
-			case TRIPLE_DASH:
-				content = append(content, NewString(NewToken(CONTENT, "---", p.previos().Line)))
+			case TRIPLE_DASH, LEFT_PARAN, RIGHT_PARAN:
+				content = append(content, NewString(NewToken(CONTENT, p.previos().Lexeme, p.previos().Line)))
 			}
 		}
 

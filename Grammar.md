@@ -20,7 +20,7 @@ FormatCharacters = "#" | ">" | "{" | "}" | "[" | "]" | "-" | "_" | "(" | ")" | "
 
 Code =  Backtick { ( String | FormatCharacters | Whitespace ) } Backtick |
         Backtick Backtick Backtick { Paragraph }  Backtick Backtick Backtick
-List = { Whitespace } ( "-" | "*" | Digit "." ) Whitespace Paragraph { newLine List }
+List = { Tab } ( "-" | "*" | Digit "." ) Whitespace Paragraph { newLine List }
 Blockquote = ">" Whitespace Paragraph { newLine Blockquote }
 Line = "---" | "***"
 

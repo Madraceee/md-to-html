@@ -41,6 +41,7 @@ func generateChunk() {
 		"Line",
 		"LineBreak",
 		"Code: Token code",
+		"List: [][]Para content, []int level, []Token listType",
 	})
 	formatFile(filename)
 }

@@ -45,9 +45,9 @@ func (s *scanner) scanTokens() {
 	case ']':
 		s.addToken(RIGHT_BRACKET)
 	case '(':
-		s.addToken(LEFT_PARAN)
+		s.addTokenWithLexeme(LEFT_PARAN, "(")
 	case ')':
-		s.addToken(RIGHT_PARAN)
+		s.addTokenWithLexeme(RIGHT_PARAN, ")")
 	case '!':
 		s.addToken(EXCLAMATION)
 	case '\\':
@@ -60,7 +60,7 @@ func (s *scanner) scanTokens() {
 	case '-':
 		{
 			if s.match('-') && s.match('-') {
-				s.addToken(TRIPLE_DASH)
+				s.addTokenWithLexeme(TRIPLE_DASH, "---")
 			} else {
 				s.addToken(DASH)
 			}
@@ -104,7 +104,7 @@ func (s *scanner) scanTokens() {
 			// 1. Hello
 			if s.peek() == '.' && s.peekNext() == ' ' {
 				s.advance()
-				s.tokens = append(s.tokens, NewToken(LIST_NUMBER, s.source[s.start:s.current-2], s.line))
+				s.tokens = append(s.tokens, NewToken(LIST_NUMBER, s.source[s.start:s.current-1], s.line))
 			} else {
 				s.content()
 			}
@@ -149,7 +149,11 @@ func (s *scanner) advance() rune {
 
 // addToken Adds the token to the list given a tokentype
 func (s *scanner) addToken(tokenType TokenType) {
-	s.tokens = append(s.tokens, NewToken(tokenType, "", s.line))
+	s.addTokenWithLexeme(tokenType, "")
+}
+
+func (s *scanner) addTokenWithLexeme(tokenType TokenType, lexeme string) {
+	s.tokens = append(s.tokens, NewToken(tokenType, lexeme, s.line))
 }
 
 // heading # to ##### are considered heading else they are considered as normal string. They are only headings only if they are present at the start of the line. This will be checked by the parser
