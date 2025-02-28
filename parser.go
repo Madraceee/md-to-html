@@ -23,18 +23,22 @@ func NewParser(tokens []Token) *Parser {
 	}
 }
 
-func (p *Parser) Parse() {
+func (p *Parser) Parse() []Chunk {
 	chunks := make([]Chunk, 0)
 	for !p.isAtEnd() {
 		chunk := p.chunk()
 		chunks = append(chunks, chunk)
 	}
 
-	astPrinter := AstPrinter{}
-
-	for _, c := range chunks {
-		c.Visit(&astPrinter)
+	if DEBUG {
+		astPrinter := AstPrinter{}
+		for _, c := range chunks {
+			c.Visit(&astPrinter)
+			fmt.Println("")
+		}
 	}
+
+	return chunks
 }
 
 func (p *Parser) chunk() Chunk {
@@ -82,7 +86,8 @@ func (p *Parser) chunk() Chunk {
 
 			contents = append(contents, p.paragraph())
 		}
-
+		// Consume last line break '\n'
+		p.match(NEWLINE)
 		return NewList(contents, levels, listType)
 	} else {
 		return NewParagraph(p.paragraph())
