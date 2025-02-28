@@ -1,4 +1,3 @@
-
 Document = { Chunks } eof
 Chunks = Chunk ( newLine Chunks | eof )
 Chunk =  Heading | Paragraph | Code | List | Blockquote | Line

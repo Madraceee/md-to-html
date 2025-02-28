@@ -237,7 +237,7 @@ func (s *scanner) code() {
 
 func isContentChar(c rune) bool {
 	// (,),*, [,\,]
-	if (c >= 40 && c <= 42) || (c >= 91 && c <= 93) || (c >= 95 && c <= 96) || c == '\n' {
+	if (c >= 40 && c <= 42) || (c >= 91 && c <= 93) || c == 96 || c == '\n' {
 		return false
 	}
 	return true

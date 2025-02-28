@@ -34,3 +34,32 @@ func (a *AstPrinter) VisitWhitespacePara(w *Whitespace) (interface{}, error) {
 	fmt.Printf("Whitespace %s\n", getTokenTypeString(w.Whitespace.TokenType))
 	return nil, nil
 }
+
+func (a *AstPrinter) VisitHeadingChunk(h *Heading) (interface{}, error) {
+	fmt.Printf("Header %s - \n", getTokenTypeString(h.Header.TokenType))
+	for _, c := range h.Content {
+		c.Visit(a)
+	}
+
+	fmt.Printf("Header Over\n")
+
+	return nil, nil
+}
+
+func (a *AstPrinter) VisitParagraphChunk(p *Paragraph) (interface{}, error) {
+	for _, c := range p.Content {
+		c.Visit(a)
+	}
+
+	return nil, nil
+}
+
+func (a *AstPrinter) VisitLineChunk(*Line) (interface{}, error) {
+	fmt.Println("\n---LINE---")
+	return nil, nil
+}
+
+func (a *AstPrinter) VisitLineBreakChunk(*LineBreak) (interface{}, error) {
+	fmt.Println("Line Break")
+	return nil, nil
+}

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -17,10 +19,32 @@ var (
 
 func main() {
 	generatePara()
+	generateChunk()
 }
 
 func generatePara() {
 	filename := "para.go"
+	generateAst(filename, "Para", []string{
+		"String: Token content",
+		"Bold : []Para content",
+		"Italics: []Para content",
+		"Whitespace: Token whitespace",
+	})
+	formatFile(filename)
+}
+
+func generateChunk() {
+	filename := "chunk.go"
+	generateAst(filename, "Chunk", []string{
+		"Heading: Token header, []Para content",
+		"Paragraph: []Para content",
+		"Line",
+		"LineBreak",
+	})
+	formatFile(filename)
+}
+
+func generateAst(filename, ruleName string, rules []string) {
 	if len(os.Args) > 1 {
 		filename = os.Args[1]
 	}
@@ -39,12 +63,7 @@ func generatePara() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	defineAst(file, "Para", []string{
-		"String: Token content",
-		"Bold : []Para content",
-		"Italics: []Para content",
-		"Whitespace: Token whitespace",
-	})
+	defineAst(file, ruleName, rules)
 }
 
 func defineAst(file *os.File, basename string, types []string) {
@@ -70,10 +89,33 @@ package main
 
 	for _, _type := range types {
 		split := strings.Split(_type, ":")
+		if len(split) < 2 {
+			defineEmptyStruct(file, basename, _type)
+			continue
+		}
 		classname := strings.Trim(split[0], " ")
 		fields := strings.Trim(split[1], " ")
 		defineTypes(file, basename, classname, fields)
 	}
+}
+
+func defineEmptyStruct(file *os.File, basename, classname string) {
+	builder := strings.Builder{}
+
+	builder.WriteString("type " + classname + " struct {\n}\n\n")
+
+	// Create a builder function for the rule
+	builder.WriteString("func New" + classname + "(")
+	builder.WriteString(")" + basename + "{\n")
+	builder.WriteString("\t return &" + classname + "{}\n")
+	builder.WriteString("}\n")
+
+	_, err := file.WriteString(builder.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defineVisitFunc(file, basename, classname)
 }
 
 func defineTypes(file *os.File, basename, classname, fieldlist string) {
@@ -90,17 +132,11 @@ func defineTypes(file *os.File, basename, classname, fieldlist string) {
 	}
 
 	// Struct for the class along with the fields
-	_, err := builder.WriteString("type " + classname + " struct {\n")
-	if err != nil {
-		log.Fatal(err)
-	}
+	builder.WriteString("type " + classname + " struct {\n")
 	for _, field := range fieldsWithType {
 		builder.WriteString(toUpperFirstChar(field) + "\n")
 	}
-	_, err = builder.WriteString("\n}\n")
-	if err != nil {
-		log.Fatal(err)
-	}
+	builder.WriteString("\n}\n")
 
 	// Create a builder function for the rule
 	builder.WriteString("func New" + classname + "(")
@@ -118,7 +154,7 @@ func defineTypes(file *os.File, basename, classname, fieldlist string) {
 	builder.WriteString("\t}\n")
 	builder.WriteString("}\n")
 
-	_, err = file.WriteString(builder.String())
+	_, err := file.WriteString(builder.String())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -179,4 +215,12 @@ func toUpperFirstChar(str string) string {
 	}
 
 	return string(runes)
+}
+
+func formatFile(filename string) {
+	cmd := exec.Command("go", "fmt", filename)
+	_, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Error while formatting: ", err)
+	}
 }
