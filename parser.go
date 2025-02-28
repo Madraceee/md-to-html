@@ -59,6 +59,9 @@ func (p *Parser) chunk() Chunk {
 			return NewParagraph(p.paragraph())
 		}
 		return NewLine()
+	} else if p.match(CODE) {
+		defer p.advance()
+		return NewCode(p.previos())
 	} else {
 		return NewParagraph(p.paragraph())
 	}

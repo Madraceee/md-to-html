@@ -63,3 +63,8 @@ func (a *AstPrinter) VisitLineBreakChunk(*LineBreak) (interface{}, error) {
 	fmt.Println("Line Break")
 	return nil, nil
 }
+
+func (a *AstPrinter) VisitCodeChunk(c *Code) (interface{}, error) {
+	fmt.Printf("Code\n%s\n\n", c.Code.Lexeme)
+	return nil, nil
+}
