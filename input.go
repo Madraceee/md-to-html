@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func runFile() {
+func getContent() string {
 	args := os.Args
 	if len(args) != 2 {
 		log.Fatal("Filename not present")
@@ -20,15 +20,7 @@ func runFile() {
 		log.Fatal(err)
 	}
 
-	scanner := NewScanner(source)
-	tokens := scanner.ScanTokens()
-
-	for _, t := range tokens {
-		DPrintf("%s %s\n", getTokenTypeString(t.TokenType), t.Lexeme)
-	}
-
-	parser := NewParser(tokens)
-	parser.Parse()
+	return source
 }
 
 func getFileData(filename string) (string, error) {

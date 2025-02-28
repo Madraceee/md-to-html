@@ -12,7 +12,7 @@ type Parser struct {
 	StackTop int
 }
 
-const STACK_MAX = 64
+const STACK_MAX = 8
 
 func NewParser(tokens []Token) *Parser {
 	return &Parser{
@@ -28,14 +28,6 @@ func (p *Parser) Parse() []Chunk {
 	for !p.isAtEnd() {
 		chunk := p.chunk()
 		chunks = append(chunks, chunk)
-	}
-
-	if DEBUG {
-		astPrinter := AstPrinter{}
-		for _, c := range chunks {
-			c.Visit(&astPrinter)
-			fmt.Println("")
-		}
 	}
 
 	return chunks
@@ -266,6 +258,10 @@ func (p *Parser) advance() Token {
 	return p.previos()
 }
 
+// TODO:
+// Bad structuring...
+// Refactor code so main function reads the first then branches out into child
+// Refactor bold() and italics()
 func (p *Parser) retreat() Token {
 	if p.Current != 0 {
 		p.Current--

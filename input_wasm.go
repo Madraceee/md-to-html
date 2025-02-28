@@ -8,7 +8,7 @@ import (
 	"honnef.co/go/js/dom/v2"
 )
 
-func runFile() {
+func getContent() string {
 	// Get input from text field
 	el := dom.GetWindow().Document().QuerySelector("#input-field")
 	inputEle := el.(*dom.HTMLTextAreaElement)
@@ -16,15 +16,17 @@ func runFile() {
 	input := inputEle.Value()
 	input = input + string('\n')
 
-	scanner := NewScanner(input)
-	tokens := scanner.ScanTokens()
+	return input
+}
 
+// Update after code gen
+func printContent(tokens []Token) {
 	outputString := ""
 	for _, token := range tokens {
 		outputString += fmt.Sprintf("%v\n", GetTokenString(&token))
 	}
 
-	el = dom.GetWindow().Document().GetElementByID("output-field")
+	el := dom.GetWindow().Document().GetElementByID("output-field")
 	outputEle := el.(*dom.HTMLTextAreaElement)
 
 	outputEle.SetTextContent(outputString)
