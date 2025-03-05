@@ -71,6 +71,7 @@ func (a *AstPrinter) VisitCodeChunk(c *Code) (interface{}, error) {
 }
 
 func (a *AstPrinter) VisitListChunk(l *List) (interface{}, error) {
+	fmt.Print("Starting list\n")
 	for i := range l.Content {
 		for range l.Level[i] {
 			fmt.Printf("\t")
@@ -81,5 +82,6 @@ func (a *AstPrinter) VisitListChunk(l *List) (interface{}, error) {
 		}
 		fmt.Println("")
 	}
+	fmt.Print("End list\n")
 	return nil, nil
 }

@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
 	content := getContent()
@@ -26,4 +29,8 @@ func main() {
 			fmt.Println("")
 		}
 	}
+
+	htmlGen := NewHTMLGenerator()
+	filename := os.Args[1]
+	htmlGen.GenerateHTML(filename, asts)
 }
