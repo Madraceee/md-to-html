@@ -6,7 +6,7 @@ var (
 	DEBUG = false
 )
 
-func DPrintf(pattern string, content ...interface{}) {
+func DPrintf(pattern string, content ...any) {
 	if DEBUG {
 		fmt.Printf(pattern, content...)
 	}
