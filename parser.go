@@ -162,11 +162,36 @@ func (p *Parser) italics() Para {
 	return NewItalics(contents)
 }
 
+func (p *Parser) link() []Para {
+	title := make([]Para, 0)
+	// [ already consumed... consuming Title till ]
+	for !p.isAtEnd() && !p.match(RIGHT_BRACKET) {
+		title = append(title, NewString(p.peek()))
+		p.advance()
+	}
+
+	// After ],  ( should be present for a link
+	link := make([]Para, 0)
+	if p.match(LEFT_PARAN) {
+		for !p.isAtEnd() && !p.match(RIGHT_PARAN) {
+			link = append(link, NewString(p.peek()))
+			p.advance()
+		}
+		return []Para{NewHTMLLink(title, link)}
+	}
+
+	para := []Para{NewString(NewToken(CONTENT, "[", p.previos().Line))}
+	para = append(para, title...)
+	para = append(para, NewString(NewToken(CONTENT, "]", p.previos().Line)))
+	return para
+
+}
+
 func (p *Parser) paragraph() []Para {
 	DPrintf("Inside Para %s %s\n", getTokenTypeString(p.peek().TokenType), p.peek().Lexeme)
 	content := make([]Para, 0)
 	for {
-		if p.match(CONTENT, SPACE, TAB, TRIPLE_DASH, LEFT_PARAN, RIGHT_PARAN) {
+		if p.match(CONTENT, SPACE, TAB, TRIPLE_DASH, LEFT_PARAN, RIGHT_PARAN, LEFT_BRACKET) {
 			switch p.previos().TokenType {
 			case CONTENT:
 				content = append(content, NewString(p.previos()))
@@ -174,6 +199,8 @@ func (p *Parser) paragraph() []Para {
 				content = append(content, NewWhitespace(p.previos()))
 			case TRIPLE_DASH, LEFT_PARAN, RIGHT_PARAN:
 				content = append(content, NewString(NewToken(CONTENT, p.previos().Lexeme, p.previos().Line)))
+			case LEFT_BRACKET:
+				content = append(content, p.link()...)
 			}
 		}
 

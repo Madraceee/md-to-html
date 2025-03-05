@@ -30,6 +30,7 @@ var (
 		"orderedList":   "<ol>\n{{.}}</ol>",
 		"unorderedList": "<ul>\n{{.}}</ul>",
 		"listItem":      "<li>{{.}}</li>",
+		"link":          "<a href={{.Link}}>{{.Title}}</a>",
 	}
 )
 
@@ -299,6 +300,29 @@ func (hg *HTMLGenerator) VisitListChunk(l *List) (string, error) {
 	}
 
 	return listMap[0], nil
+}
+
+func (hg *HTMLGenerator) VisitHTMLLinkPara(h *HTMLLink) (string, error) {
+	title := ""
+	for _, t := range h.Title {
+		s, _ := t.Visit(hg)
+		title += s
+	}
+
+	link := ""
+	for _, l := range h.Link {
+		s, _ := l.Visit(hg)
+		link += s
+	}
+
+	var buff bytes.Buffer
+	data := struct {
+		Title string
+		Link  string
+	}{Title: title, Link: link}
+	err := hg.template["link"].Execute(&buff, data)
+
+	return buff.String(), err
 }
 
 // Helper functions

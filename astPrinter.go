@@ -7,7 +7,7 @@ type AstPrinter struct {
 
 func (a *AstPrinter) VisitStringPara(s *String) (string, error) {
 	fmt.Printf("%s", s.Content.Lexeme)
-	return "", nil
+	return s.Content.Lexeme, nil
 }
 
 func (a *AstPrinter) VisitBoldPara(b *Bold) (string, error) {
@@ -83,5 +83,23 @@ func (a *AstPrinter) VisitListChunk(l *List) (string, error) {
 		fmt.Println("")
 	}
 	fmt.Print("End list\n")
+	return "", nil
+}
+
+func (a *AstPrinter) VisitHTMLLinkPara(h *HTMLLink) (string, error) {
+	title := ""
+	for _, t := range h.Title {
+		s, _ := t.Visit(a)
+		title += s
+	}
+
+	link := ""
+	for _, l := range h.Link {
+		s, _ := l.Visit(a)
+		link += s
+	}
+
+	fmt.Printf("\nLink-> Title:%s  Link:%s\n", title, link)
+
 	return "", nil
 }

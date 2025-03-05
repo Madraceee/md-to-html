@@ -9,6 +9,7 @@ type VisitPara interface {
 	VisitBoldPara(*Bold) (string, error)
 	VisitItalicsPara(*Italics) (string, error)
 	VisitWhitespacePara(*Whitespace) (string, error)
+	VisitHTMLLinkPara(*HTMLLink) (string, error)
 }
 
 type String struct {
@@ -65,4 +66,20 @@ func NewWhitespace(whitespace Token) Para {
 
 func (expr *Whitespace) Visit(visitor VisitPara) (string, error) {
 	return visitor.VisitWhitespacePara(expr)
+}
+
+type HTMLLink struct {
+	Title []Para
+	Link  []Para
+}
+
+func NewHTMLLink(Title []Para, Link []Para) Para {
+	return &HTMLLink{
+		Title: Title,
+		Link:  Link,
+	}
+}
+
+func (expr *HTMLLink) Visit(visitor VisitPara) (string, error) {
+	return visitor.VisitHTMLLinkPara(expr)
 }

@@ -240,15 +240,11 @@ func (s *scanner) code() {
 }
 
 func isContentChar(c rune) bool {
-	// (,),*, [,\,]
+	// (,),*, [,\,] , `
 	if (c >= 40 && c <= 42) || (c >= 91 && c <= 93) || c == 96 || c == '\n' {
 		return false
 	}
 	return true
-}
-
-func isSpecialCharacter(c rune) bool {
-	return c == '*' || c == '_'
 }
 
 func isDigit(c rune) bool {

@@ -29,6 +29,7 @@ func generatePara() {
 		"Bold : []Para content",
 		"Italics: []Para content",
 		"Whitespace: Token whitespace",
+		"HTMLLink: []Para Title, []Para Link ",
 	})
 	formatFile(filename)
 }

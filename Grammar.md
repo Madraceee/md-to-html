@@ -3,7 +3,7 @@ Chunks = Chunk ( newLine Chunks | eof )
 Chunk =  Heading | Paragraph | Code | List | Blockquote | Line
 Heading = Header Paragraph
 Header = ( "#" | "##" | "###" | "####" | "#####" | "######" ) { Whitespace }
-Paragraph = { ( String | Format | Whitespace )} newLine
+Paragraph = { ( String | Link |Format | Whitespace )} newLine
 String = (Alphabets | Digit | SpecialCharacters)
 Format = Bold | Italic
 Bold =  Astrick Astrick Paragraph Astrick Astrick |
@@ -17,6 +17,7 @@ Whitespace = " " | "\t"
 Astrick = "*"
 Underscore = "_"
 FormatCharacters = "#" | ">" | "{" | "}" | "[" | "]" | "-" | "_" | "(" | ")" | "\" | "`"
+Link = LeftBracket String RightBracket LeftParan String RightParan
 
 Code =  Backtick { ( String | FormatCharacters | Whitespace ) } Backtick |
         Backtick Backtick Backtick { Paragraph }  Backtick Backtick Backtick
