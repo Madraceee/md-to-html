@@ -84,7 +84,7 @@ func (hg *HTMLGenerator) GenerateHTML(filename string, chunks []Chunk) {
 			continue
 		}
 
-		items = append(items, s.(string))
+		items = append(items, s)
 	}
 
 	body := ""
@@ -106,18 +106,18 @@ func (hg *HTMLGenerator) GenerateHTML(filename string, chunks []Chunk) {
 }
 
 // Functions to support AST operations
-func (hg *HTMLGenerator) VisitStringPara(s *String) (interface{}, error) {
+func (hg *HTMLGenerator) VisitStringPara(s *String) (string, error) {
 	return s.Content.Lexeme, nil
 }
 
-func (hg *HTMLGenerator) VisitBoldPara(b *Bold) (interface{}, error) {
+func (hg *HTMLGenerator) VisitBoldPara(b *Bold) (string, error) {
 	s := ""
 	for _, c := range b.Content {
 		output, err := c.Visit(hg)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		s += output.(string)
+		s += output
 	}
 
 	var buff bytes.Buffer
@@ -125,14 +125,14 @@ func (hg *HTMLGenerator) VisitBoldPara(b *Bold) (interface{}, error) {
 	return buff.String(), err
 }
 
-func (hg *HTMLGenerator) VisitItalicsPara(i *Italics) (interface{}, error) {
+func (hg *HTMLGenerator) VisitItalicsPara(i *Italics) (string, error) {
 	s := ""
 	for _, c := range i.Content {
 		output, err := c.Visit(hg)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		s += output.(string)
+		s += output
 	}
 
 	var buff bytes.Buffer
@@ -140,7 +140,7 @@ func (hg *HTMLGenerator) VisitItalicsPara(i *Italics) (interface{}, error) {
 	return buff.String(), err
 }
 
-func (hg *HTMLGenerator) VisitWhitespacePara(w *Whitespace) (interface{}, error) {
+func (hg *HTMLGenerator) VisitWhitespacePara(w *Whitespace) (string, error) {
 	if w.Whitespace.TokenType == SPACE {
 		return " ", nil
 	} else if w.Whitespace.TokenType == TAB {
@@ -150,14 +150,14 @@ func (hg *HTMLGenerator) VisitWhitespacePara(w *Whitespace) (interface{}, error)
 	return "", nil
 }
 
-func (hg *HTMLGenerator) VisitHeadingChunk(h *Heading) (interface{}, error) {
+func (hg *HTMLGenerator) VisitHeadingChunk(h *Heading) (string, error) {
 	s := ""
 	for _, c := range h.Content {
 		output, err := c.Visit(hg)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		s += output.(string)
+		s += output
 	}
 
 	var err error
@@ -182,14 +182,14 @@ func (hg *HTMLGenerator) VisitHeadingChunk(h *Heading) (interface{}, error) {
 	return buff.String(), err
 }
 
-func (hg *HTMLGenerator) VisitParagraphChunk(p *Paragraph) (interface{}, error) {
+func (hg *HTMLGenerator) VisitParagraphChunk(p *Paragraph) (string, error) {
 	s := ""
 	for _, c := range p.Content {
 		output, err := c.Visit(hg)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		s += output.(string)
+		s += output
 	}
 
 	var buff bytes.Buffer
@@ -197,17 +197,17 @@ func (hg *HTMLGenerator) VisitParagraphChunk(p *Paragraph) (interface{}, error) 
 	return buff.String(), err
 }
 
-func (hg *HTMLGenerator) VisitLineChunk(*Line) (interface{}, error) {
+func (hg *HTMLGenerator) VisitLineChunk(*Line) (string, error) {
 	return templates["line"], nil
 }
 
-func (hg *HTMLGenerator) VisitLineBreakChunk(*LineBreak) (interface{}, error) {
+func (hg *HTMLGenerator) VisitLineBreakChunk(*LineBreak) (string, error) {
 	return templates["break"], nil
 }
 
 // Support multiple language later
 // TODO: Add support for ` and “
-func (hg *HTMLGenerator) VisitCodeChunk(c *Code) (interface{}, error) {
+func (hg *HTMLGenerator) VisitCodeChunk(c *Code) (string, error) {
 	code := c.Code.Lexeme[3 : len(c.Code.Lexeme)-3]
 
 	var buff bytes.Buffer
@@ -215,16 +215,16 @@ func (hg *HTMLGenerator) VisitCodeChunk(c *Code) (interface{}, error) {
 	return buff.String(), err
 }
 
-func (hg *HTMLGenerator) VisitListChunk(l *List) (interface{}, error) {
+func (hg *HTMLGenerator) VisitListChunk(l *List) (string, error) {
 	listItems := make([]string, 0)
 	for i := range l.Content {
 		s := ""
 		for _, p := range l.Content[i] {
 			output, err := p.Visit(hg)
 			if err != nil {
-				return nil, err
+				return "", err
 			}
-			out := strings.Trim(output.(string), " ")
+			out := strings.Trim(output, " ")
 			s += out
 		}
 

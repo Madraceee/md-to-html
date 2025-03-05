@@ -1,16 +1,16 @@
 package main
 
 type Chunk interface {
-	Visit(VisitChunk) (interface{}, error)
+	Visit(VisitChunk) (string, error)
 }
 
 type VisitChunk interface {
-	VisitHeadingChunk(*Heading) (interface{}, error)
-	VisitParagraphChunk(*Paragraph) (interface{}, error)
-	VisitLineChunk(*Line) (interface{}, error)
-	VisitLineBreakChunk(*LineBreak) (interface{}, error)
-	VisitCodeChunk(*Code) (interface{}, error)
-	VisitListChunk(*List) (interface{}, error)
+	VisitHeadingChunk(*Heading) (string, error)
+	VisitParagraphChunk(*Paragraph) (string, error)
+	VisitLineChunk(*Line) (string, error)
+	VisitLineBreakChunk(*LineBreak) (string, error)
+	VisitCodeChunk(*Code) (string, error)
+	VisitListChunk(*List) (string, error)
 }
 
 type Heading struct {
@@ -25,7 +25,7 @@ func NewHeading(header Token, content []Para) Chunk {
 	}
 }
 
-func (expr *Heading) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *Heading) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitHeadingChunk(expr)
 }
 
@@ -39,7 +39,7 @@ func NewParagraph(content []Para) Chunk {
 	}
 }
 
-func (expr *Paragraph) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *Paragraph) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitParagraphChunk(expr)
 }
 
@@ -50,7 +50,7 @@ func NewLine() Chunk {
 	return &Line{}
 }
 
-func (expr *Line) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *Line) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitLineChunk(expr)
 }
 
@@ -61,7 +61,7 @@ func NewLineBreak() Chunk {
 	return &LineBreak{}
 }
 
-func (expr *LineBreak) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *LineBreak) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitLineBreakChunk(expr)
 }
 
@@ -75,7 +75,7 @@ func NewCode(code Token) Chunk {
 	}
 }
 
-func (expr *Code) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *Code) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitCodeChunk(expr)
 }
 
@@ -93,6 +93,6 @@ func NewList(content [][]Para, level []int, listType []Token) Chunk {
 	}
 }
 
-func (expr *List) Visit(visitor VisitChunk) (interface{}, error) {
+func (expr *List) Visit(visitor VisitChunk) (string, error) {
 	return visitor.VisitListChunk(expr)
 }

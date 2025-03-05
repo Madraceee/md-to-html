@@ -5,37 +5,37 @@ import "fmt"
 type AstPrinter struct {
 }
 
-func (a *AstPrinter) VisitStringPara(s *String) (interface{}, error) {
+func (a *AstPrinter) VisitStringPara(s *String) (string, error) {
 	fmt.Printf("%s", s.Content.Lexeme)
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitBoldPara(b *Bold) (interface{}, error) {
+func (a *AstPrinter) VisitBoldPara(b *Bold) (string, error) {
 	fmt.Print("BOLD\n")
 	for _, c := range b.Content {
 		c.Visit(a)
 	}
 	fmt.Print("BOLD OVER\n")
 
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitItalicsPara(i *Italics) (interface{}, error) {
+func (a *AstPrinter) VisitItalicsPara(i *Italics) (string, error) {
 	fmt.Print("ITALICS\n")
 	for _, c := range i.Content {
 		c.Visit(a)
 	}
 	fmt.Print("ITALICS OVER\n")
 
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitWhitespacePara(w *Whitespace) (interface{}, error) {
+func (a *AstPrinter) VisitWhitespacePara(w *Whitespace) (string, error) {
 	fmt.Printf("Whitespace %s\n", getTokenTypeString(w.Whitespace.TokenType))
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitHeadingChunk(h *Heading) (interface{}, error) {
+func (a *AstPrinter) VisitHeadingChunk(h *Heading) (string, error) {
 	fmt.Printf("Header %s - ", getTokenTypeString(h.Header.TokenType))
 	for _, c := range h.Content {
 		c.Visit(a)
@@ -43,34 +43,34 @@ func (a *AstPrinter) VisitHeadingChunk(h *Heading) (interface{}, error) {
 
 	fmt.Printf("Header Over\n")
 
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitParagraphChunk(p *Paragraph) (interface{}, error) {
+func (a *AstPrinter) VisitParagraphChunk(p *Paragraph) (string, error) {
 	for _, c := range p.Content {
 		c.Visit(a)
 	}
 	fmt.Println("")
 
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitLineChunk(*Line) (interface{}, error) {
+func (a *AstPrinter) VisitLineChunk(*Line) (string, error) {
 	fmt.Println("\n---LINE---")
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitLineBreakChunk(*LineBreak) (interface{}, error) {
+func (a *AstPrinter) VisitLineBreakChunk(*LineBreak) (string, error) {
 	fmt.Println("Line Break")
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitCodeChunk(c *Code) (interface{}, error) {
+func (a *AstPrinter) VisitCodeChunk(c *Code) (string, error) {
 	fmt.Printf("Code\n%s\n\n", c.Code.Lexeme)
-	return nil, nil
+	return "", nil
 }
 
-func (a *AstPrinter) VisitListChunk(l *List) (interface{}, error) {
+func (a *AstPrinter) VisitListChunk(l *List) (string, error) {
 	fmt.Print("Starting list\n")
 	for i := range l.Content {
 		for range l.Level[i] {
@@ -83,5 +83,5 @@ func (a *AstPrinter) VisitListChunk(l *List) (interface{}, error) {
 		fmt.Println("")
 	}
 	fmt.Print("End list\n")
-	return nil, nil
+	return "", nil
 }

@@ -80,7 +80,7 @@ package main
 	// Add interface for all rules to implement
 	// Allows all rules to return a  string of what they hold
 	builder.WriteString("\ntype  " + basename + " interface{\n")
-	builder.WriteString("\tVisit(Visit" + basename + ") (interface{}, error)\n}\n\n")
+	builder.WriteString("\tVisit(Visit" + basename + ") (string, error)\n}\n\n")
 
 	_, err = file.WriteString(builder.String())
 	if err != nil {
@@ -166,7 +166,7 @@ func defineTypes(file *os.File, basename, classname, fieldlist string) {
 
 func defineVisitFunc(file *os.File, basename, classname string) {
 	builder := strings.Builder{}
-	builder.WriteString("\nfunc (expr *" + classname + ") Visit(visitor Visit" + basename + ") (interface{}, error){\n")
+	builder.WriteString("\nfunc (expr *" + classname + ") Visit(visitor Visit" + basename + ") (string, error){\n")
 	builder.WriteString("\treturn visitor.Visit" + classname + basename + "(expr)\n")
 	builder.WriteString("}\n")
 
@@ -182,7 +182,7 @@ func defineToBeImplementedInterface(file *os.File, basename string, types []stri
 	for _, _type := range types {
 		split := strings.Split(_type, ":")
 		classname := strings.Trim(split[0], " ")
-		builder.WriteString("\tVisit" + classname + basename + "(*" + classname + ") (interface{}, error)\n")
+		builder.WriteString("\tVisit" + classname + basename + "(*" + classname + ") (string, error)\n")
 	}
 	builder.WriteString("}\n\n")
 

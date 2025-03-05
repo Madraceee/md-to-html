@@ -1,14 +1,14 @@
 package main
 
 type Para interface {
-	Visit(VisitPara) (interface{}, error)
+	Visit(VisitPara) (string, error)
 }
 
 type VisitPara interface {
-	VisitStringPara(*String) (interface{}, error)
-	VisitBoldPara(*Bold) (interface{}, error)
-	VisitItalicsPara(*Italics) (interface{}, error)
-	VisitWhitespacePara(*Whitespace) (interface{}, error)
+	VisitStringPara(*String) (string, error)
+	VisitBoldPara(*Bold) (string, error)
+	VisitItalicsPara(*Italics) (string, error)
+	VisitWhitespacePara(*Whitespace) (string, error)
 }
 
 type String struct {
@@ -21,7 +21,7 @@ func NewString(content Token) Para {
 	}
 }
 
-func (expr *String) Visit(visitor VisitPara) (interface{}, error) {
+func (expr *String) Visit(visitor VisitPara) (string, error) {
 	return visitor.VisitStringPara(expr)
 }
 
@@ -35,7 +35,7 @@ func NewBold(content []Para) Para {
 	}
 }
 
-func (expr *Bold) Visit(visitor VisitPara) (interface{}, error) {
+func (expr *Bold) Visit(visitor VisitPara) (string, error) {
 	return visitor.VisitBoldPara(expr)
 }
 
@@ -49,7 +49,7 @@ func NewItalics(content []Para) Para {
 	}
 }
 
-func (expr *Italics) Visit(visitor VisitPara) (interface{}, error) {
+func (expr *Italics) Visit(visitor VisitPara) (string, error) {
 	return visitor.VisitItalicsPara(expr)
 }
 
@@ -63,6 +63,6 @@ func NewWhitespace(whitespace Token) Para {
 	}
 }
 
-func (expr *Whitespace) Visit(visitor VisitPara) (interface{}, error) {
+func (expr *Whitespace) Visit(visitor VisitPara) (string, error) {
 	return visitor.VisitWhitespacePara(expr)
 }
