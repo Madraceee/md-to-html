@@ -183,9 +183,25 @@ func (p *Parser) link() []Para {
 	}
 
 	// After ],  ( should be present for a link
+	noOfParans := 0
 	link := make([]Para, 0)
 	if p.match(LEFT_PARAN) {
-		for !p.isAtEnd() && !p.match(RIGHT_PARAN) {
+		// '( )' can occur in a link and the outermost parans should
+		// be considered as the link boundary. Anything inside should
+		// be part of the link
+		for !p.isAtEnd() {
+			if p.match(RIGHT_PARAN) {
+				if noOfParans == 0 {
+					break
+				}
+				noOfParans--
+				link = append(link, NewString(p.previos()))
+				continue
+			}
+
+			if p.peek().TokenType == LEFT_PARAN {
+				noOfParans++
+			}
 			link = append(link, NewString(p.peek()))
 			p.advance()
 		}

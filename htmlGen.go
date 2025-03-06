@@ -25,11 +25,11 @@ var (
 		"h5":            "<h5>{{.}}</h5>",
 		"h6":            "<h6>{{.}}</h6>",
 		"line":          "\n<hr>\n",
-		"break":         "\n<br>\n",
+		"break":         "\n\n",
 		"orderedList":   "<ol>\n{{.}}</ol>",
 		"unorderedList": "<ul>\n{{.}}</ul>",
 		"listItem":      "<li>{{.}}</li>",
-		"link":          "<a href={{.Link}}>{{.Title}}</a>",
+		"link":          "<a href={{.Link}} target='_blank'>{{.Title}}</a>",
 		"code-multiline": `<pre><code>
 {{.}}
 </code></pre>`,
@@ -119,7 +119,7 @@ func (hg *HTMLGenerator) GenerateHTML(filename string, chunks []Chunk) {
 
 // Functions to support AST operations
 func (hg *HTMLGenerator) VisitStringPara(s *String) (string, error) {
-	return strings.TrimRight(s.Content.Lexeme, " "), nil
+	return s.Content.Lexeme, nil
 }
 
 func (hg *HTMLGenerator) VisitBoldPara(b *Bold) (string, error) {
