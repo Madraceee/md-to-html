@@ -66,12 +66,14 @@ func (expr *LineBreak) Visit(visitor VisitChunk) (string, error) {
 }
 
 type Code struct {
-	Code Token
+	Code      Token
+	NoOfLines int
 }
 
-func NewCode(code Token) Chunk {
+func NewCode(code Token, noOfLines int) Chunk {
 	return &Code{
-		Code: code,
+		Code:      code,
+		NoOfLines: noOfLines,
 	}
 }
 

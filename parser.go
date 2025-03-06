@@ -55,8 +55,20 @@ func (p *Parser) chunk() Chunk {
 		}
 		return NewLine()
 	} else if p.match(CODE) {
+		// Check whether code is single line or multiline
+		noOfBackticks := 0
+		code := p.previos().Lexeme
+
+		for _, c := range code {
+			if c == '`' {
+				noOfBackticks++
+				continue
+			}
+			break
+		}
+
 		defer p.advance()
-		return NewCode(p.previos())
+		return NewCode(p.previos(), noOfBackticks)
 	} else if p.match(LIST_NUMBER, DASH, STAR, PLUS) {
 		DPrintf("In List %s\n", getTokenTypeString(p.previos().TokenType))
 		p.retreat()
@@ -212,6 +224,10 @@ func (p *Parser) paragraph() []Para {
 		}
 
 		if p.match(NEWLINE) || p.previos().TokenType == NEWLINE {
+			break
+		}
+
+		if p.peek().TokenType == CODE {
 			break
 		}
 

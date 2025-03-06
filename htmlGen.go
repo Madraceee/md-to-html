@@ -15,24 +15,28 @@ import (
 // templates
 var (
 	templates = map[string]string{
-		"p":       "<p>{{.}}</p>",
-		"bold":    "<strong>{{.}}</strong>",
-		"italics": "<em>{{.}}</em>",
-		"h1":      "<h1>{{.}}</h1>",
-		"h2":      "<h2>{{.}}</h2>",
-		"h3":      "<h3>{{.}}</h3>",
-		"h4":      "<h4>{{.}}</h4>",
-		"h5":      "<h5>{{.}}</h5>",
-		"h6":      "<h6>{{.}}</h6>",
-		"line":    "\n<hr>\n",
-		"break":   "\n<br>\n",
-		"code-go": `<pre><code class="language-go">
-		{{.}}
-		</code></pre>`,
+		"p":             "<p>{{.}}</p>",
+		"bold":          "<strong>{{.}}</strong>",
+		"italics":       "<em>{{.}}</em>",
+		"h1":            "<h1>{{.}}</h1>",
+		"h2":            "<h2>{{.}}</h2>",
+		"h3":            "<h3>{{.}}</h3>",
+		"h4":            "<h4>{{.}}</h4>",
+		"h5":            "<h5>{{.}}</h5>",
+		"h6":            "<h6>{{.}}</h6>",
+		"line":          "\n<hr>\n",
+		"break":         "\n<br>\n",
 		"orderedList":   "<ol>\n{{.}}</ol>",
 		"unorderedList": "<ul>\n{{.}}</ul>",
 		"listItem":      "<li>{{.}}</li>",
 		"link":          "<a href={{.Link}}>{{.Title}}</a>",
+		"code-multiline": `<pre><code>
+{{.}}
+</code></pre>`,
+		"code-go": `<pre><code class="language-go">
+{{.}}
+</code></pre>`,
+		"code-singleLine": `<code>{{.}}</code>`,
 	}
 )
 
@@ -115,7 +119,7 @@ func (hg *HTMLGenerator) GenerateHTML(filename string, chunks []Chunk) {
 
 // Functions to support AST operations
 func (hg *HTMLGenerator) VisitStringPara(s *String) (string, error) {
-	return s.Content.Lexeme, nil
+	return strings.TrimRight(s.Content.Lexeme, " "), nil
 }
 
 func (hg *HTMLGenerator) VisitBoldPara(b *Bold) (string, error) {
@@ -213,13 +217,33 @@ func (hg *HTMLGenerator) VisitLineBreakChunk(*LineBreak) (string, error) {
 	return templates["break"], nil
 }
 
-// Support multiple language later
-// TODO: Add support for ` and “
 func (hg *HTMLGenerator) VisitCodeChunk(c *Code) (string, error) {
-	code := c.Code.Lexeme[3 : len(c.Code.Lexeme)-3]
+	code := c.Code.Lexeme
+
+	key := "code-singleLine"
+	if c.NoOfLines == 3 {
+		key = "code-multiline"
+		lines := strings.Split(code[3:len(code)-3], "\n")
+		if len(lines) > 1 {
+			language := strings.Trim(lines[0], " ")
+			if language != "" {
+				key = "code-" + language
+			}
+		}
+
+		code = strings.Join(lines[1:], "\n")
+	} else {
+		code = code[c.NoOfLines : len(code)-c.NoOfLines]
+	}
+
+	code = strings.TrimRight(code, " \n\t")
 
 	var buff bytes.Buffer
-	err := hg.template["code-go"].Execute(&buff, code)
+	if _, ok := hg.template[key]; !ok {
+		return "", errors.New("Lanugage not present")
+	}
+
+	err := hg.template[key].Execute(&buff, code)
 	return buff.String(), err
 }
 

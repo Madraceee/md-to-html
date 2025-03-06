@@ -30,6 +30,7 @@ func main() {
 		}
 	}
 
+	// HTML Generator
 	htmlGen := NewHTMLGenerator()
 	filename := os.Args[1]
 	htmlGen.GenerateHTML(filename, asts)
