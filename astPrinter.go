@@ -6,84 +6,79 @@ type AstPrinter struct {
 }
 
 func (a *AstPrinter) VisitStringPara(s *String) (string, error) {
-	fmt.Printf("%s", s.Content.Lexeme)
 	return s.Content.Lexeme, nil
 }
 
 func (a *AstPrinter) VisitBoldPara(b *Bold) (string, error) {
-	fmt.Print("BOLD\n")
+	s := ""
 	for _, c := range b.Content {
-		c.Visit(a)
+		content, _ := c.Visit(a)
+		s += content
 	}
-	fmt.Print("BOLD OVER\n")
 
-	return "", nil
+	return fmt.Sprintf("<Bold %s>", s), nil
 }
 
 func (a *AstPrinter) VisitItalicsPara(i *Italics) (string, error) {
-	fmt.Print("ITALICS\n")
+	s := ""
 	for _, c := range i.Content {
-		c.Visit(a)
+		content, _ := c.Visit(a)
+		s += content
 	}
-	fmt.Print("ITALICS OVER\n")
 
-	return "", nil
+	return fmt.Sprintf("<Italics %s>", s), nil
 }
 
 func (a *AstPrinter) VisitWhitespacePara(w *Whitespace) (string, error) {
-	fmt.Printf("Whitespace %s\n", getTokenTypeString(w.Whitespace.TokenType))
-	return "", nil
+	return fmt.Sprintf("<Whitespace %s>", getTokenTypeString(w.Whitespace.TokenType)), nil
 }
 
 func (a *AstPrinter) VisitHeadingChunk(h *Heading) (string, error) {
-	fmt.Printf("Header %s - ", getTokenTypeString(h.Header.TokenType))
+	s := ""
 	for _, c := range h.Content {
-		c.Visit(a)
+		content, _ := c.Visit(a)
+		s += content
 	}
 
-	fmt.Printf("Header Over\n")
-
-	return "", nil
+	return fmt.Sprintf("<Header %s %s>", getTokenTypeString(h.Header.TokenType), s), nil
 }
 
 func (a *AstPrinter) VisitParagraphChunk(p *Paragraph) (string, error) {
+	s := ""
 	for _, c := range p.Content {
-		c.Visit(a)
-	}
-	fmt.Println("")
+		content, _ := c.Visit(a)
+		s += content
 
-	return "", nil
+	}
+
+	return fmt.Sprintf("<Para %s>", s), nil
 }
 
 func (a *AstPrinter) VisitLineChunk(*Line) (string, error) {
-	fmt.Println("\n---LINE---")
-	return "", nil
+	return fmt.Sprintf("\n<Line >\n"), nil
 }
 
 func (a *AstPrinter) VisitLineBreakChunk(*LineBreak) (string, error) {
-	fmt.Println("Line Break")
-	return "", nil
+	return fmt.Sprintf("\n<Line Break>\n"), nil
 }
 
 func (a *AstPrinter) VisitCodeChunk(c *Code) (string, error) {
-	fmt.Printf("Code\n%s\n\n", c.Code.Lexeme)
-	return "", nil
+	return fmt.Sprintf("<Code\n %s\n>", c.Code.Lexeme), nil
 }
 
 func (a *AstPrinter) VisitListChunk(l *List) (string, error) {
-	fmt.Print("Starting list\n")
+	s := ""
 	for i := range l.Content {
-		for range l.Level[i] {
-			fmt.Printf("\t")
-		}
-		fmt.Printf("%s %s ", getTokenTypeString(l.ListType[i].TokenType), l.ListType[i].Lexeme)
+
+		content := ""
 		for _, p := range l.Content[i] {
-			p.Visit(a)
+			c, _ := p.Visit(a)
+			content += c
 		}
-		fmt.Println("")
+		s += fmt.Sprintf("<List %s Level->%d Content->%s>", getTokenTypeString(l.ListType[i].TokenType), l.Level[i], content)
+		s += "\n"
 	}
-	fmt.Print("End list\n")
-	return "", nil
+	return s, nil
 }
 
 func (a *AstPrinter) VisitHTMLLinkPara(h *HTMLLink) (string, error) {
@@ -99,7 +94,5 @@ func (a *AstPrinter) VisitHTMLLinkPara(h *HTMLLink) (string, error) {
 		link += s
 	}
 
-	fmt.Printf("\nLink-> Title:%s  Link:%s\n", title, link)
-
-	return "", nil
+	return fmt.Sprintf("<HTMLLink Title->%s Link->%s>", title, link), nil
 }

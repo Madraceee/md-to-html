@@ -25,8 +25,8 @@ func main() {
 	if DEBUG {
 		astPrinter := AstPrinter{}
 		for _, c := range asts {
-			c.Visit(&astPrinter)
-			fmt.Println("")
+			s, _ := c.Visit(&astPrinter)
+			fmt.Println(s)
 		}
 	}
 
