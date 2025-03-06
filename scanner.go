@@ -50,8 +50,6 @@ func (s *scanner) scanTokens() {
 		s.addTokenWithLexeme(RIGHT_PARAN, ")")
 	case '!':
 		s.addToken(EXCLAMATION)
-	case '\\':
-		s.addToken(FORWARD_SLASH)
 	case '=':
 		s.addToken(EQUAL)
 	// Multi Character

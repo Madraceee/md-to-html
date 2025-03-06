@@ -4,10 +4,12 @@ import (
 	"bytes"
 	_ "embed"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 	"text/template"
+	"time"
 )
 
 // templates
@@ -36,6 +38,7 @@ var (
 
 type data struct {
 	Title string
+	Date  string
 	Body  string
 }
 
@@ -93,6 +96,10 @@ func (hg *HTMLGenerator) GenerateHTML(filename string, chunks []Chunk) {
 		body += item + "\n"
 	}
 	hg.data.Body = body
+
+	year, month, date := time.Now().Date()
+	dateString := fmt.Sprintf("%d-%s-%d", date, month.String(), year)
+	hg.data.Date = dateString
 
 	var buffer bytes.Buffer
 	err = t.Execute(&buffer, hg.data)

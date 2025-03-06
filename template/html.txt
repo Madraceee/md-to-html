@@ -9,6 +9,17 @@
         <meta name=”robots” content="index, follow">
 </head>
 <body>
+        <header>
+                <p><a href="../index.html">&larr;Back</a></p>
+                <h1>{{.Title}}</h1>
+                <p>Published on {{.Date}}</p>
+        </header>
        {{.Body}} 
+        <footer>
+                <p class="center">Do not copy 👍</p>
+                <p class="center">Check out my portfolio page
+                        <a href="https://www.iamnitheesh.com" target="_blank">www.iamnitheesh.com</a>
+                </p>
+        </footer>
 </body>
 <html>
