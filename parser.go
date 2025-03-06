@@ -42,7 +42,7 @@ func (p *Parser) chunk() Chunk {
 		return p.heading()
 	} else if p.peek().TokenType == TRIPLE_DASH {
 		p.advance()
-		if p.match(SPACE, TAB) {
+		if p.match(SPACE, TAB, NEWLINE) {
 			for !p.isAtEnd() {
 				if p.match(NEWLINE) {
 					break
