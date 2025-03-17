@@ -1,7 +1,7 @@
 clean: 
 	@rm -rf bin/
 build: clean
-	@go build -o bin/md-to-blog
+	@go build -o bin/md-to-html
 test: 
 	@go test -v ./...
 test-coverage:
